@@ -457,6 +457,43 @@ mod serde {
     }
 }
 
+#[cfg(feature = "winit")]
+mod winit {
+    use std::mem::transmute;
+
+    use crate::Fits64;
+
+    impl Fits64 for winit::keyboard::KeyCode {
+        unsafe fn from_u64(x: u64) -> Self {
+            unsafe { transmute::<u8, Self>(x as _) }
+        }
+
+        fn to_u64(self) -> u64 {
+            unsafe { transmute::<Self, u8>(self) as _ }
+        }
+    }
+
+    impl Fits64 for winit::keyboard::NativeKeyCode {
+        unsafe fn from_u64(x: u64) -> Self {
+            unsafe { transmute::<u64, Self>(x as _) }
+        }
+
+        fn to_u64(self) -> u64 {
+            unsafe { transmute::<Self, u64>(self) as _ }
+        }
+    }
+
+    impl Fits64 for winit::event::MouseButton {
+        unsafe fn from_u64(x: u64) -> Self {
+            unsafe { transmute::<u32, Self>(x as _) }
+        }
+
+        fn to_u64(self) -> u64 {
+            unsafe { transmute::<Self, u32>(self) as _ }
+        }
+    }
+}
+
 impl<'a, 'b, T: Fits64> std::ops::BitOr<&'b Set64<T>> for &'a Set64<T> {
     type Output = Set64<T>;
 
